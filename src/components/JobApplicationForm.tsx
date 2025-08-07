@@ -153,6 +153,21 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
           </div>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-800 mb-2">
+            Address *
+          </label>
+          <textarea
+            name="address"
+            value={formData.address}
+            onChange={handleInputChange}
+            required
+            rows={3}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
+            placeholder="Enter your full address"
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
@@ -194,20 +209,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-800 mb-2">
-            Address *
-          </label>
-          <textarea
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            required
-            rows={3}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
-            placeholder="Enter your full address"
-          />
-        </div>
+       
 
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-2">
