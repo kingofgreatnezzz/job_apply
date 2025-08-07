@@ -15,10 +15,14 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-                        <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">t</span>
-              </div>
+                                     <div className="flex items-center space-x-3 mb-4">
+               <div className="w-16 h-16 flex items-center justify-center">
+                 <img 
+                   src="/logo.png" 
+                   alt="TELUS Logo" 
+                   className="w-full h-full object-contain"
+                 />
+               </div>
               <div>
                 <h3 className="text-2xl font-bold text-white">TELUS</h3>
                 <p className="text-gray-400 text-sm">Digital • Remote Opportunities</p>

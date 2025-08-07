@@ -124,12 +124,23 @@ export default function AdminPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              TELUS Job Applications Dashboard
-            </h1>
-            <p className="text-gray-600">
-              Total Applications: {applications.length}
-            </p>
+            <div className="flex items-center justify-center space-x-3 mb-4">
+                              <div className="w-16 h-16 flex items-center justify-center">
+                  <img 
+                    src="/logo.png" 
+                    alt="TELUS Logo" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              <div>
+                <h1 className="text-4xl font-bold text-gray-800">
+                  TELUS Job Applications Dashboard
+                </h1>
+                <p className="text-gray-600">
+                  Total Applications: {applications.length}
+                </p>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>

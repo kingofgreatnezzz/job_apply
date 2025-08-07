@@ -171,7 +171,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              Position Applying For *
+              What Position are you Applying For? *
             </label>
             <select
               name="position"
@@ -190,7 +190,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              Employment Status *
+              What is a your Employment Status *
             </label>
             <select
               name="employmentStatus"
@@ -207,27 +207,6 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               ))}
             </select>
           </div>
-        </div>
-
-       
-
-        <div>
-          <label className="block text-sm font-medium text-gray-800 mb-2">
-            Social Security Number (SSN) *
-          </label>
-          <input
-            type="password"
-            name="ssn"
-            value={formData.ssn}
-            onChange={handleInputChange}
-            required
-            pattern="[0-9]{3}-[0-9]{2}-[0-9]{4}"
-            placeholder="XXX-XX-XXXX"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Format: XXX-XX-XXXX
-          </p>
         </div>
 
         <div>
@@ -307,6 +286,24 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               )}
             </div>
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-800 mb-2">
+            Social Security Number (SSN) *
+          </label>
+          <input
+            name="ssn"
+            value={formData.ssn}
+            onChange={handleInputChange}
+            required
+            pattern="[0-9]{3}-[0-9]{2}-[0-9]{4}"
+            placeholder="XXX-XX-XXXX"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
+          />
+          <p className="text-sm text-gray-500 mt-1">
+            Note: Pls upload your valid SSN
+          </p>
         </div>
 
         <div className="pt-6">

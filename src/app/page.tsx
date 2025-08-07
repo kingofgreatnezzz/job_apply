@@ -45,18 +45,22 @@ export default function Home() {
             >
               Welcome to
             </motion.div>
-            <motion.div
-              className="flex items-center justify-center space-x-2 mt-2"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-            >
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-lg">t</span>
-              </div>
-              <span className="text-white text-2xl font-bold">TELUS</span>
-              <span className="text-white text-xl font-medium">Digital</span>
-            </motion.div>
+                         <motion.div
+               className="flex items-center justify-center space-x-2 mt-2"
+               initial={{ opacity: 0, scale: 0.8 }}
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ delay: 0.5, duration: 0.8 }}
+             >
+               <div className="w-12 h-12 flex items-center justify-center">
+                 <img 
+                   src="/logo.png" 
+                   alt="TELUS Logo" 
+                   className="w-full h-full object-contain"
+                 />
+               </div>
+               <span className="text-white text-2xl font-bold">TELUS</span>
+               <span className="text-white text-xl font-medium">Digital</span>
+             </motion.div>
           </div>
         </div>
 
