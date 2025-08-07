@@ -302,7 +302,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
           />
           <p className="text-sm text-gray-500 mt-1">
-            Note: Pls upload your valid SSN
+            Please upload your valid SSN
           </p>
         </div>
 
