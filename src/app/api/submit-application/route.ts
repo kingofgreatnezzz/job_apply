@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
       address: formData.get('address') as string,
       employmentStatus: formData.get('employmentStatus') as string,
       ssn: formData.get('ssn') as string,
-      idCardFileName: formData.get('idCard') ? (formData.get('idCard') as File).name : null
+      idCardFrontFileName: formData.get('idCardFront') ? (formData.get('idCardFront') as File).name : null,
+      idCardBackFileName: formData.get('idCardBack') ? (formData.get('idCardBack') as File).name : null
     };
 
     // Create data directory if it doesn't exist
@@ -39,15 +40,27 @@ export async function POST(request: NextRequest) {
     applications.push(application);
     await fs.writeFile(applicationsFile, JSON.stringify(applications, null, 2));
 
-    // Handle file upload if present
-    const idCardFile = formData.get('idCard') as File;
-    if (idCardFile) {
-      const uploadsDir = path.join(dataDir, 'uploads');
-      await fs.ensureDir(uploadsDir);
-      
-      const bytes = await idCardFile.arrayBuffer();
+    // Handle file uploads if present
+    const uploadsDir = path.join(dataDir, 'uploads');
+    await fs.ensureDir(uploadsDir);
+    
+    // Handle front ID card
+    const idCardFrontFile = formData.get('idCardFront') as File;
+    if (idCardFrontFile) {
+      const bytes = await idCardFrontFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const fileName = `${application.id}_${idCardFile.name}`;
+      const fileName = `${application.id}_front_${idCardFrontFile.name}`;
+      const filePath = path.join(uploadsDir, fileName);
+      
+      await fs.writeFile(filePath, buffer);
+    }
+    
+    // Handle back ID card
+    const idCardBackFile = formData.get('idCardBack') as File;
+    if (idCardBackFile) {
+      const bytes = await idCardBackFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const fileName = `${application.id}_back_${idCardBackFile.name}`;
       const filePath = path.join(uploadsDir, fileName);
       
       await fs.writeFile(filePath, buffer);

@@ -15,7 +15,8 @@ interface Application {
   address: string;
   employmentStatus: string;
   ssn: string;
-  idCardFileName: string | null;
+  idCardFrontFileName: string | null;
+  idCardBackFileName: string | null;
 }
 
 
@@ -227,27 +228,56 @@ export default function AdminPage() {
                        <p><span className="font-medium text-gray-800">Position:</span> {app.position}</p>
                        <p><span className="font-medium text-gray-800">Employment Status:</span> {app.employmentStatus}</p>
                        <p><span className="font-medium text-gray-800">Applied:</span> {new Date(app.timestamp).toLocaleDateString()}</p>
-                       <p><span className="font-medium text-gray-800">ID Card:</span> 
-                         {app.idCardFileName ? (
-                           <div className="flex items-center space-x-2 mt-1">
-                             <span className="text-blue-600">{app.idCardFileName}</span>
-                             <button
-                               onClick={() => handleViewImage(app.idCardFileName!)}
-                               className="text-blue-600 hover:text-blue-800 text-xs underline"
-                             >
-                               View
-                             </button>
-                             <button
-                               onClick={() => handleDownloadImage(app.idCardFileName!)}
-                               className="text-green-600 hover:text-green-800 text-xs underline"
-                             >
-                               Download
-                             </button>
-                           </div>
-                         ) : (
-                           'Not uploaded'
-                         )}
-                       </p>
+                       <p><span className="font-medium text-gray-800">ID Cards:</span></p>
+                       <div className="space-y-2 mt-2">
+                         {/* Front ID Card */}
+                         <div>
+                           <span className="text-sm font-medium text-gray-700">Front:</span>
+                           {app.idCardFrontFileName ? (
+                             <div className="flex items-center space-x-2 mt-1">
+                               <span className="text-blue-600 text-sm">{app.idCardFrontFileName}</span>
+                               <button
+                                 onClick={() => handleViewImage(app.idCardFrontFileName!)}
+                                 className="text-blue-600 hover:text-blue-800 text-xs underline"
+                               >
+                                 View
+                               </button>
+                               <button
+                                 onClick={() => handleDownloadImage(app.idCardFrontFileName!)}
+                                 className="text-green-600 hover:text-green-800 text-xs underline"
+                               >
+                                 Download
+                               </button>
+                             </div>
+                           ) : (
+                             <span className="text-sm text-gray-500">Not uploaded</span>
+                           )}
+                         </div>
+                         
+                         {/* Back ID Card */}
+                         <div>
+                           <span className="text-sm font-medium text-gray-700">Back:</span>
+                           {app.idCardBackFileName ? (
+                             <div className="flex items-center space-x-2 mt-1">
+                               <span className="text-blue-600 text-sm">{app.idCardBackFileName}</span>
+                               <button
+                                 onClick={() => handleViewImage(app.idCardBackFileName!)}
+                                 className="text-blue-600 hover:text-blue-800 text-xs underline"
+                               >
+                                 View
+                               </button>
+                               <button
+                                 onClick={() => handleDownloadImage(app.idCardBackFileName!)}
+                                 className="text-green-600 hover:text-green-800 text-xs underline"
+                               >
+                                 Download
+                               </button>
+                             </div>
+                           ) : (
+                             <span className="text-sm text-gray-500">Not uploaded</span>
+                           )}
+                         </div>
+                       </div>
                      </div>
                    </div>
 
