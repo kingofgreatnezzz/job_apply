@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface Application {
   id: string;
@@ -17,15 +18,7 @@ interface Application {
   idCardFileName: string | null;
 }
 
-interface AdminPageState {
-  applications: Application[];
-  loading: boolean;
-  error: string | null;
-  searchTerm: string;
-  filterPosition: string;
-  selectedImage: string | null;
-  showImageModal: boolean;
-}
+
 
 export default function AdminPage() {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -49,7 +42,7 @@ export default function AdminPage() {
       } else {
         setError('Failed to fetch applications');
       }
-    } catch (error) {
+    } catch (err) {
       setError('Error fetching applications');
     } finally {
       setLoading(false);
@@ -90,7 +83,7 @@ export default function AdminPage() {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-      } catch (error) {
+      } catch (err) {
         alert('Error downloading file');
       }
     }
@@ -310,17 +303,18 @@ export default function AdminPage() {
                  </svg>
                </button>
              </div>
-             <div className="flex justify-center">
-               <img
-                 src={selectedImage}
-                 alt="ID Card"
-                 className="max-w-full max-h-[70vh] object-contain rounded-lg"
-                 onError={(e) => {
-                   e.currentTarget.src = '/api/uploads/placeholder.png';
-                   e.currentTarget.alt = 'File not found';
-                 }}
-               />
-             </div>
+                           <div className="flex justify-center">
+                <Image
+                  src={selectedImage}
+                  alt="ID Card"
+                  width={800}
+                  height={600}
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                  onError={() => {
+                    // Handle error silently
+                  }}
+                />
+              </div>
              <div className="flex justify-center mt-4 space-x-4">
                <button
                  onClick={() => handleDownloadImage(selectedImage.split('/').pop() || '')}

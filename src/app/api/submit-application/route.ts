@@ -59,11 +59,11 @@ export async function POST(request: NextRequest) {
       applicationId: application.id 
     });
 
-  } catch (error) {
-    console.error('Error submitting application:', error);
-    return NextResponse.json(
-      { success: false, message: 'Error submitting application' },
-      { status: 500 }
-    );
-  }
+      } catch (err) {
+      console.error('Error submitting application:', err);
+      return NextResponse.json(
+        { success: false, message: 'Error submitting application' },
+        { status: 500 }
+      );
+    }
 } 

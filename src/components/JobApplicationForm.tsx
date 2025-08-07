@@ -76,9 +76,9 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
        } else {
          alert('Error submitting application. Please try again.');
        }
-     } catch (error) {
-       alert('Error submitting application. Please try again.');
-     } finally {
+         } catch (err) {
+      alert('Error submitting application. Please try again.');
+    } finally {
        setIsSubmitting(false);
      }
   };
@@ -291,9 +291,9 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
                </svg>
              </div>
              <h3 className="text-xl font-bold text-gray-800 mb-2">Application Submitted!</h3>
-             <p className="text-gray-600 mb-6">
-               Thank you for your application. We'll review your information and contact you soon.
-             </p>
+                           <p className="text-gray-600 mb-6">
+                Thank you for your application. We&apos;ll review your information and contact you soon.
+              </p>
              <button
                onClick={() => setShowSuccessModal(false)}
                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"

@@ -4,13 +4,14 @@ import path from 'path';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string[] } }
+  { params }: { params: Promise<{ filename: string[] }> }
 ) {
   try {
-    const filename = params.filename.join('/');
+    const { filename } = await params;
+    const filenameString = filename.join('/');
     const dataDir = path.join(process.cwd(), 'data');
     const uploadsDir = path.join(dataDir, 'uploads');
-    const filePath = path.join(uploadsDir, filename);
+    const filePath = path.join(uploadsDir, filenameString);
 
     // Check if file exists
     if (!await fs.pathExists(filePath)) {
@@ -24,7 +25,7 @@ export async function GET(
     const fileBuffer = await fs.readFile(filePath);
     
     // Determine content type based on file extension
-    const ext = path.extname(filename).toLowerCase();
+    const ext = path.extname(filenameString).toLowerCase();
     let contentType = 'application/octet-stream';
     
     if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
@@ -37,7 +38,7 @@ export async function GET(
     return new NextResponse(fileBuffer, {
       headers: {
         'Content-Type': contentType,
-        'Content-Disposition': `inline; filename="${filename}"`,
+        'Content-Disposition': `inline; filename="${filenameString}"`,
         'Cache-Control': 'public, max-age=3600',
       },
     });
