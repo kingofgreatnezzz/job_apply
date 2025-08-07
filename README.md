@@ -1,6 +1,6 @@
-# Job Application Landing Page
+# TELUS Job Application Landing Page
 
-A beautiful, modern job application landing page built with Next.js, React, TypeScript, TailwindCSS, and Framer Motion.
+A beautiful, modern job application landing page for TELUS built with Next.js, React, TypeScript, TailwindCSS, and Framer Motion.
 
 ## Features
 
@@ -181,9 +181,9 @@ This project is open source and available under the [MIT License](LICENSE).
 ## Support
 
 For support or questions, please contact:
-- Email: careers@global.com
+- Email: careers@telus.com
 - Phone: +1 (555) 123-4567
 
 ---
 
-**Built with ❤️ using Next.js, React, and TailwindCSS**
+**Built with ❤️ for TELUS using Next.js, React, and TailwindCSS**
