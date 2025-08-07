@@ -29,6 +29,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
     idCard: null as File | null
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -59,32 +60,32 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
         body: formDataToSend,
       });
 
-      if (response.ok) {
-        alert('Application submitted successfully!');
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          position: '',
-          address: '',
-          employmentStatus: '',
-          ssn: '',
-          idCard: null
-        });
-      } else {
-        alert('Error submitting application. Please try again.');
-      }
-    } catch (error) {
-      alert('Error submitting application. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+             if (response.ok) {
+         setShowSuccessModal(true);
+         setFormData({
+           firstName: '',
+           lastName: '',
+           email: '',
+           phone: '',
+           position: '',
+           address: '',
+           employmentStatus: '',
+           ssn: '',
+           idCard: null
+         });
+       } else {
+         alert('Error submitting application. Please try again.');
+       }
+     } catch (error) {
+       alert('Error submitting application. Please try again.');
+     } finally {
+       setIsSubmitting(false);
+     }
   };
 
   return (
     <motion.div
-      className="bg-white rounded-2xl shadow-xl p-8"
+      className="bg-gray-50 rounded-2xl shadow-xl p-8 border border-gray-200"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
@@ -93,7 +94,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-800 mb-2">
               First Name *
             </label>
             <input
@@ -102,11 +103,11 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               value={formData.firstName}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-800 mb-2">
               Last Name *
             </label>
             <input
@@ -115,14 +116,14 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-800 mb-2">
               Email Address *
             </label>
             <input
@@ -131,11 +132,11 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-800 mb-2">
               Phone Number *
             </label>
             <input
@@ -144,14 +145,14 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               value={formData.phone}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-800 mb-2">
               Position Applying For *
             </label>
             <select
@@ -159,7 +160,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               value={formData.position}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="">Select a position</option>
               {positions.map((position) => (
@@ -170,7 +171,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-800 mb-2">
               Employment Status *
             </label>
             <select
@@ -178,7 +179,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
               value={formData.employmentStatus}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="">Select employment status</option>
               {employmentStatuses.map((status) => (
@@ -191,7 +192,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-800 mb-2">
             Address *
           </label>
           <textarea
@@ -200,13 +201,13 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
             onChange={handleInputChange}
             required
             rows={3}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             placeholder="Enter your full address"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-800 mb-2">
             Social Security Number (SSN) *
           </label>
           <input
@@ -217,7 +218,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
             required
             pattern="[0-9]{3}-[0-9]{2}-[0-9]{4}"
             placeholder="XXX-XX-XXXX"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
           />
           <p className="text-sm text-gray-500 mt-1">
             Format: XXX-XX-XXXX
@@ -225,7 +226,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-800 mb-2">
             Upload Valid ID Card *
           </label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -267,8 +268,41 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
           >
             {isSubmitting ? 'Submitting...' : 'Submit Application'}
           </motion.button>
-        </div>
-      </form>
-    </motion.div>
-  );
-} 
+                 </div>
+       </form>
+
+       {/* Success Modal */}
+       {showSuccessModal && (
+         <motion.div
+           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           transition={{ duration: 0.3 }}
+         >
+           <motion.div
+             className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center"
+             initial={{ scale: 0.8, opacity: 0 }}
+             animate={{ scale: 1, opacity: 1 }}
+             transition={{ duration: 0.3 }}
+           >
+             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+               <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+               </svg>
+             </div>
+             <h3 className="text-xl font-bold text-gray-800 mb-2">Application Submitted!</h3>
+             <p className="text-gray-600 mb-6">
+               Thank you for your application. We'll review your information and contact you soon.
+             </p>
+             <button
+               onClick={() => setShowSuccessModal(false)}
+               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+             >
+               Close
+             </button>
+           </motion.div>
+         </motion.div>
+       )}
+     </motion.div>
+   );
+ } 

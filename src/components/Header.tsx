@@ -23,10 +23,10 @@ export default function Header() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
               </svg>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-800">Global Careers</h1>
-              <p className="text-xs text-gray-500">Remote Opportunities</p>
-            </div>
+                         <div>
+               <h1 className="text-xl font-bold text-gray-800">TELUS</h1>
+               <p className="text-xs text-gray-500">Remote Opportunities</p>
+             </div>
           </motion.div>
 
           {/* Navigation */}
@@ -54,14 +54,6 @@ export default function Header() {
               transition={{ duration: 0.2 }}
             >
               Apply
-            </motion.a>
-            <motion.a
-              href="/only-admin"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Admin
             </motion.a>
           </nav>
 

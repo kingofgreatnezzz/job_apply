@@ -15,19 +15,17 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-                </svg>
+                        <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">t</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold">Global Careers</h3>
-                <p className="text-gray-400 text-sm">Remote Opportunities</p>
+                <h3 className="text-2xl font-bold text-white">TELUS</h3>
+                <p className="text-gray-400 text-sm">Digital • Remote Opportunities</p>
               </div>
             </div>
             <p className="text-gray-300 mb-6 max-w-md">
-              Join our global team of professionals and discover remote work opportunities that fit your lifestyle and career goals.
+              Over 10 million job seekers have trusted TELUS to find better work opportunities. Join our global team and discover remote work that fits your lifestyle and career goals.
             </p>
             <div className="flex space-x-4">
               <motion.a
@@ -108,7 +106,7 @@ export default function Footer() {
                 <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className="text-gray-300">careers@global.com</span>
+                <span className="text-gray-300">careers@telus.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +134,7 @@ export default function Footer() {
           viewport={{ once: true }}
         >
           <p className="text-gray-400">
-            © 2024 Global Careers. All rights reserved. | 
+            © 2024 TELUS Digital. All rights reserved. | 
             <a href="#" className="text-blue-400 hover:text-blue-300 ml-1">Privacy Policy</a> | 
             <a href="#" className="text-blue-400 hover:text-blue-300 ml-1">Terms of Service</a>
           </p>

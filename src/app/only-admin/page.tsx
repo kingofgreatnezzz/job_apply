@@ -17,12 +17,24 @@ interface Application {
   idCardFileName: string | null;
 }
 
+interface AdminPageState {
+  applications: Application[];
+  loading: boolean;
+  error: string | null;
+  searchTerm: string;
+  filterPosition: string;
+  selectedImage: string | null;
+  showImageModal: boolean;
+}
+
 export default function AdminPage() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPosition, setFilterPosition] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     fetchApplications();
@@ -57,6 +69,32 @@ export default function AdminPage() {
   });
 
   const positions = [...new Set(applications.map(app => app.position))];
+
+  const handleViewImage = (fileName: string) => {
+    if (fileName) {
+      setSelectedImage(`/api/uploads/${fileName}`);
+      setShowImageModal(true);
+    }
+  };
+
+  const handleDownloadImage = async (fileName: string) => {
+    if (fileName) {
+      try {
+        const response = await fetch(`/api/uploads/${fileName}`);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (error) {
+        alert('Error downloading file');
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -93,7 +131,7 @@ export default function AdminPage() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              Job Applications Dashboard
+              TELUS Job Applications Dashboard
             </h1>
             <p className="text-gray-600">
               Total Applications: {applications.length}
@@ -175,40 +213,60 @@ export default function AdminPage() {
               >
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Personal Info */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                      Personal Information
-                    </h3>
-                    <div className="space-y-2 text-sm">
-                      <p><span className="font-medium">Name:</span> {app.firstName} {app.lastName}</p>
-                      <p><span className="font-medium">Email:</span> {app.email}</p>
-                      <p><span className="font-medium">Phone:</span> {app.phone}</p>
-                      <p><span className="font-medium">SSN:</span> {app.ssn}</p>
-                    </div>
-                  </div>
+                                     <div>
+                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                       Personal Information
+                     </h3>
+                     <div className="space-y-2 text-sm text-gray-700">
+                       <p><span className="font-medium text-gray-800">Name:</span> {app.firstName} {app.lastName}</p>
+                       <p><span className="font-medium text-gray-800">Email:</span> {app.email}</p>
+                       <p><span className="font-medium text-gray-800">Phone:</span> {app.phone}</p>
+                       <p><span className="font-medium text-gray-800">SSN:</span> {app.ssn}</p>
+                     </div>
+                   </div>
 
                   {/* Job Info */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                      Job Information
-                    </h3>
-                    <div className="space-y-2 text-sm">
-                      <p><span className="font-medium">Position:</span> {app.position}</p>
-                      <p><span className="font-medium">Employment Status:</span> {app.employmentStatus}</p>
-                      <p><span className="font-medium">Applied:</span> {new Date(app.timestamp).toLocaleDateString()}</p>
-                      <p><span className="font-medium">ID Card:</span> {app.idCardFileName || 'Not uploaded'}</p>
-                    </div>
-                  </div>
+                                     <div>
+                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                       Job Information
+                     </h3>
+                     <div className="space-y-2 text-sm text-gray-700">
+                       <p><span className="font-medium text-gray-800">Position:</span> {app.position}</p>
+                       <p><span className="font-medium text-gray-800">Employment Status:</span> {app.employmentStatus}</p>
+                       <p><span className="font-medium text-gray-800">Applied:</span> {new Date(app.timestamp).toLocaleDateString()}</p>
+                       <p><span className="font-medium text-gray-800">ID Card:</span> 
+                         {app.idCardFileName ? (
+                           <div className="flex items-center space-x-2 mt-1">
+                             <span className="text-blue-600">{app.idCardFileName}</span>
+                             <button
+                               onClick={() => handleViewImage(app.idCardFileName!)}
+                               className="text-blue-600 hover:text-blue-800 text-xs underline"
+                             >
+                               View
+                             </button>
+                             <button
+                               onClick={() => handleDownloadImage(app.idCardFileName!)}
+                               className="text-green-600 hover:text-green-800 text-xs underline"
+                             >
+                               Download
+                             </button>
+                           </div>
+                         ) : (
+                           'Not uploaded'
+                         )}
+                       </p>
+                     </div>
+                   </div>
 
                   {/* Address */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                      Address
-                    </h3>
-                    <div className="space-y-2 text-sm">
-                      <p className="text-gray-700">{app.address}</p>
-                    </div>
-                  </div>
+                                     <div>
+                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                       Address
+                     </h3>
+                     <div className="space-y-2 text-sm text-gray-700">
+                       <p>{app.address}</p>
+                     </div>
+                   </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-gray-200">
@@ -224,8 +282,62 @@ export default function AdminPage() {
               </motion.div>
             ))
           )}
-        </div>
-      </div>
-    </div>
-  );
-} 
+                 </div>
+       </div>
+
+       {/* Image Modal */}
+       {showImageModal && selectedImage && (
+         <motion.div
+           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           transition={{ duration: 0.3 }}
+         >
+           <motion.div
+             className="bg-white rounded-2xl p-6 max-w-4xl max-h-[90vh] overflow-auto"
+             initial={{ scale: 0.8, opacity: 0 }}
+             animate={{ scale: 1, opacity: 1 }}
+             transition={{ duration: 0.3 }}
+           >
+             <div className="flex justify-between items-center mb-4">
+               <h3 className="text-lg font-semibold text-gray-800">ID Card Image</h3>
+               <button
+                 onClick={() => setShowImageModal(false)}
+                 className="text-gray-500 hover:text-gray-700"
+               >
+                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                 </svg>
+               </button>
+             </div>
+             <div className="flex justify-center">
+               <img
+                 src={selectedImage}
+                 alt="ID Card"
+                 className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                 onError={(e) => {
+                   e.currentTarget.src = '/api/uploads/placeholder.png';
+                   e.currentTarget.alt = 'File not found';
+                 }}
+               />
+             </div>
+             <div className="flex justify-center mt-4 space-x-4">
+               <button
+                 onClick={() => handleDownloadImage(selectedImage.split('/').pop() || '')}
+                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+               >
+                 Download
+               </button>
+               <button
+                 onClick={() => setShowImageModal(false)}
+                 className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+               >
+                 Close
+               </button>
+             </div>
+           </motion.div>
+         </motion.div>
+       )}
+     </div>
+   );
+ } 
