@@ -18,8 +18,8 @@ export async function POST(request: NextRequest) {
       address: formData.get('address') as string,
       employmentStatus: formData.get('employmentStatus') as string,
       ssn: formData.get('ssn') as string,
-      idCardFrontFileName: formData.get('idCardFront') ? (formData.get('idCardFront') as File).name : null,
-      idCardBackFileName: formData.get('idCardBack') ? (formData.get('idCardBack') as File).name : null
+      idCardFrontFileName: null as string | null,
+      idCardBackFileName: null as string | null
     };
 
     // Try to save to file system (works in development, may not work in production)
@@ -43,9 +43,6 @@ export async function POST(request: NextRequest) {
         applications = [];
       }
 
-      applications.push(application);
-      await fs.writeFile(applicationsFile, JSON.stringify(applications, null, 2));
-
       // Handle file uploads if present
       const uploadsDir = path.join(dataDir, 'uploads');
       await fs.ensureDir(uploadsDir);
@@ -59,6 +56,7 @@ export async function POST(request: NextRequest) {
         const filePath = path.join(uploadsDir, fileName);
         
         await fs.writeFile(filePath, buffer);
+        application.idCardFrontFileName = fileName; // Store the full file name
       }
       
       // Handle back ID card
@@ -70,7 +68,11 @@ export async function POST(request: NextRequest) {
         const filePath = path.join(uploadsDir, fileName);
         
         await fs.writeFile(filePath, buffer);
+        application.idCardBackFileName = fileName; // Store the full file name
       }
+
+      applications.push(application);
+      await fs.writeFile(applicationsFile, JSON.stringify(applications, null, 2));
 
       console.log('Application saved successfully:', application.id);
       

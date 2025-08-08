@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 
 interface Application {
   id: string;
@@ -50,23 +49,29 @@ export default function AdminPage() {
     }
   };
 
-  const filteredApplications = applications.filter(app => {
-    const matchesSearch = 
-      app.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.position.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesPosition = filterPosition === '' || app.position === filterPosition;
-    
-    return matchesSearch && matchesPosition;
-  });
+  const filteredApplications = applications
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // Sort by newest first
+    .filter(app => {
+      const matchesSearch = 
+        app.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.position.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesPosition = filterPosition === '' || app.position === filterPosition;
+      
+      return matchesSearch && matchesPosition;
+    });
 
   const positions = [...new Set(applications.map(app => app.position))];
 
   const handleViewImage = (fileName: string) => {
     if (fileName) {
-      setSelectedImage(`/api/uploads/${fileName}`);
+      // Encode the file name for URL safety
+      const encodedFileName = encodeURIComponent(fileName);
+      const imageUrl = `/api/uploads/${encodedFileName}`;
+      console.log('Attempting to view image:', imageUrl);
+      setSelectedImage(imageUrl);
       setShowImageModal(true);
     }
   };
@@ -74,7 +79,15 @@ export default function AdminPage() {
   const handleDownloadImage = async (fileName: string) => {
     if (fileName) {
       try {
-        const response = await fetch(`/api/uploads/${fileName}`);
+        // Encode the file name for URL safety
+        const encodedFileName = encodeURIComponent(fileName);
+        const downloadUrl = `/api/uploads/${encodedFileName}`;
+        console.log('Attempting to download image:', downloadUrl);
+        
+        const response = await fetch(downloadUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -85,7 +98,8 @@ export default function AdminPage() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } catch (err) {
-        alert('Error downloading file');
+        console.error('Error downloading file:', err);
+        alert('Error downloading file. Please try again.');
       }
     }
   };
@@ -345,14 +359,18 @@ export default function AdminPage() {
                </button>
              </div>
                            <div className="flex justify-center">
-                <Image
+                <img
                   src={selectedImage}
                   alt="ID Card"
-                  width={800}
-                  height={600}
                   className="max-w-full max-h-[70vh] object-contain rounded-lg"
-                  onError={() => {
-                    // Handle error silently
+                  onError={(e) => {
+                    console.error('Error loading image:', selectedImage);
+                    console.error('Image error details:', e);
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik02MCAxMDBDNjAgODkuNTQ0NyA2OC4wMDAxIDgxIDc4IDgxSDEyMkMxMzEuOTk5OSA4MSAxNDAgODkuNTQ0NyAxNDAgMTAwVjEyMEMxNDAgMTMwLjQ1NSAxMzEuOTk5OSAxMzkgMTIyIDEzOUg3OEM2OC4wMDAxIDEzOSA2MCAxMzAuNDU1IDYwIDEyMFYxMDBaIiBmaWxsPSIjOUI5QkEwIi8+CjxwYXRoIGQ9Ik04MCAxMDBDODAgOTQuNDc3MiA4NC40NzcyIDkwIDkwIDkwSDEwMEMxMDUuNTIzIDkwIDExMCA5NC40NzcyIDExMCAxMDBWMTEwQzExMCAxMTUuNTIzIDEwNS41MjMgMTIwIDEwMCAxMjBIOUFDODQuNDc3MiAxMjAgODAgMTE1LjUyMyA4MCAxMTBWMTAwWiIgZmlsbD0iI0Q5RDBEQyIvPgo8L3N2Zz4K';
+                    alert(`Failed to load image: ${selectedImage}`);
+                  }}
+                  onLoad={() => {
+                    console.log('Image loaded successfully:', selectedImage);
                   }}
                 />
               </div>

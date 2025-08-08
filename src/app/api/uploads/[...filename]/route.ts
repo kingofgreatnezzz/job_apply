@@ -10,27 +10,36 @@ export async function GET(
     const { filename } = await params;
     const filenameString = filename.join('/');
     
+    // Decode the URL-encoded filename
+    const decodedFilename = decodeURIComponent(filenameString);
+    
+    console.log('Attempting to serve file:', decodedFilename);
+    
     // Use /tmp directory for Vercel (writable in serverless functions)
     const dataDir = process.env.NODE_ENV === 'production' 
       ? '/tmp/data' 
       : path.join(process.cwd(), 'data');
     
     const uploadsDir = path.join(dataDir, 'uploads');
-    const filePath = path.join(uploadsDir, filenameString);
+    const filePath = path.join(uploadsDir, decodedFilename);
+
+    console.log('Looking for file at:', filePath);
 
     // Check if file exists
     if (!await fs.pathExists(filePath)) {
+      console.log('File not found at:', filePath);
       return NextResponse.json(
-        { error: 'File not found' },
+        { error: 'File not found', path: filePath, requestedFile: decodedFilename },
         { status: 404 }
       );
     }
 
     // Read file
     const fileBuffer = await fs.readFile(filePath);
+    console.log('File read successfully, size:', fileBuffer.length);
     
     // Determine content type based on file extension
-    const ext = path.extname(filenameString).toLowerCase();
+    const ext = path.extname(decodedFilename).toLowerCase();
     let contentType = 'application/octet-stream';
     
     if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
@@ -43,7 +52,7 @@ export async function GET(
     return new NextResponse(fileBuffer, {
       headers: {
         'Content-Type': contentType,
-        'Content-Disposition': `inline; filename="${filenameString}"`,
+        'Content-Disposition': `inline; filename="${decodedFilename}"`,
         'Cache-Control': 'public, max-age=3600',
       },
     });
@@ -51,7 +60,7 @@ export async function GET(
   } catch (error) {
     console.error('Error serving file:', error);
     return NextResponse.json(
-      { error: 'Error serving file' },
+      { error: 'Error serving file', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
