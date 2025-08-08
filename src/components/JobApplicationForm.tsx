@@ -98,27 +98,25 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              First Name *
+              First Name
             </label>
             <input
               type="text"
               name="firstName"
               value={formData.firstName}
               onChange={handleInputChange}
-              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              Last Name *
+              Last Name
             </label>
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
-              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
@@ -127,27 +125,25 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              Email Address *
+              Email Address
             </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              Phone Number *
+              Phone Number
             </label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             />
           </div>
@@ -155,13 +151,12 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
 
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-2">
-            Address *
+            Address
           </label>
           <textarea
             name="address"
             value={formData.address}
             onChange={handleInputChange}
-            required
             rows={3}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
             placeholder="Enter your full address"
@@ -171,13 +166,12 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              What Position are you Applying For? *
+              What Position are you Applying For?
             </label>
             <select
               name="position"
               value={formData.position}
               onChange={handleInputChange}
-              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="">Select a position</option>
@@ -190,13 +184,12 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              What is a your Employment Status *
+              What is a your Employment Status? 
             </label>
             <select
               name="employmentStatus"
               value={formData.employmentStatus}
               onChange={handleInputChange}
-              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             >
               <option value="">Select employment status</option>
@@ -211,7 +204,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
 
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-2">
-            Upload Valid ID Card (Front & Back) *
+            Upload Valid ID Card (Front & Back)
           </label>
           <p className="text-sm text-gray-600 mb-4">
             Please upload both the front and back sides of your ID card for verification purposes.
@@ -221,14 +214,13 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
             {/* Front of ID Card */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Front of ID Card *
+                Front of ID Card
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                 <input
                   type="file"
                   name="idCardFront"
                   onChange={handleFileChange}
-                  required
                   accept="image/*,.pdf"
                   className="hidden"
                   id="idCardFrontUpload"
@@ -255,14 +247,13 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
             {/* Back of ID Card */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Back of ID Card *
+                Back of ID Card
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                 <input
                   type="file"
                   name="idCardBack"
                   onChange={handleFileChange}
-                  required
                   accept="image/*,.pdf"
                   className="hidden"
                   id="idCardBackUpload"
@@ -290,19 +281,17 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
 
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-2">
-            Social Security Number (SSN) *
+            Social Security Number (SSN)
           </label>
           <input
+            type="text"
             name="ssn"
             value={formData.ssn}
             onChange={handleInputChange}
-            required
-            pattern="[0-9]{3}-[0-9]{2}-[0-9]{4}"
-            placeholder="XXX-XX-XXXX"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
           />
           <p className="text-sm text-gray-500 mt-1">
-            Please upload your valid SSN
+            Note: Please enter a valid Social Security Number
           </p>
         </div>
 
