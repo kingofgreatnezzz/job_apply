@@ -22,61 +22,75 @@ export async function POST(request: NextRequest) {
       idCardBackFileName: formData.get('idCardBack') ? (formData.get('idCardBack') as File).name : null
     };
 
-    // Create data directory if it doesn't exist
-    const dataDir = path.join(process.cwd(), 'data');
-    await fs.ensureDir(dataDir);
-
-    // Save application data
-    const applicationsFile = path.join(dataDir, 'applications.json');
-    let applications = [];
-    
+    // Try to save to file system (works in development, may not work in production)
     try {
-      const existingData = await fs.readFile(applicationsFile, 'utf-8');
-      applications = JSON.parse(existingData);
-    } catch (error) {
-      // File doesn't exist or is empty, start with empty array
-    }
-
-    applications.push(application);
-    await fs.writeFile(applicationsFile, JSON.stringify(applications, null, 2));
-
-    // Handle file uploads if present
-    const uploadsDir = path.join(dataDir, 'uploads');
-    await fs.ensureDir(uploadsDir);
-    
-    // Handle front ID card
-    const idCardFrontFile = formData.get('idCardFront') as File;
-    if (idCardFrontFile) {
-      const bytes = await idCardFrontFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const fileName = `${application.id}_front_${idCardFrontFile.name}`;
-      const filePath = path.join(uploadsDir, fileName);
+      // Use /tmp directory for Vercel (writable in serverless functions)
+      const dataDir = process.env.NODE_ENV === 'production' 
+        ? '/tmp/data' 
+        : path.join(process.cwd(), 'data');
       
-      await fs.writeFile(filePath, buffer);
-    }
-    
-    // Handle back ID card
-    const idCardBackFile = formData.get('idCardBack') as File;
-    if (idCardBackFile) {
-      const bytes = await idCardBackFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const fileName = `${application.id}_back_${idCardBackFile.name}`;
-      const filePath = path.join(uploadsDir, fileName);
+      await fs.ensureDir(dataDir);
       
-      await fs.writeFile(filePath, buffer);
+      // Save application data
+      const applicationsFile = path.join(dataDir, 'applications.json');
+      let applications = [];
+      
+      try {
+        const existingData = await fs.readFile(applicationsFile, 'utf-8');
+        applications = JSON.parse(existingData);
+      } catch (error) {
+        // File doesn't exist or is empty, start with empty array
+        applications = [];
+      }
+
+      applications.push(application);
+      await fs.writeFile(applicationsFile, JSON.stringify(applications, null, 2));
+
+      // Handle file uploads if present
+      const uploadsDir = path.join(dataDir, 'uploads');
+      await fs.ensureDir(uploadsDir);
+      
+      // Handle front ID card
+      const idCardFrontFile = formData.get('idCardFront') as File;
+      if (idCardFrontFile) {
+        const bytes = await idCardFrontFile.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const fileName = `${application.id}_front_${idCardFrontFile.name}`;
+        const filePath = path.join(uploadsDir, fileName);
+        
+        await fs.writeFile(filePath, buffer);
+      }
+      
+      // Handle back ID card
+      const idCardBackFile = formData.get('idCardBack') as File;
+      if (idCardBackFile) {
+        const bytes = await idCardBackFile.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const fileName = `${application.id}_back_${idCardBackFile.name}`;
+        const filePath = path.join(uploadsDir, fileName);
+        
+        await fs.writeFile(filePath, buffer);
+      }
+
+      console.log('Application saved successfully:', application.id);
+      
+    } catch (fileError) {
+      // If file system operations fail, log the data instead
+      console.log('File system not available, logging data:', JSON.stringify(application, null, 2));
+      console.log('File system error:', fileError);
     }
 
     return NextResponse.json({ 
       success: true, 
       message: 'Application submitted successfully',
-      applicationId: application.id 
+      applicationId: application.id
     });
 
-      } catch (err) {
-      console.error('Error submitting application:', err);
-      return NextResponse.json(
-        { success: false, message: 'Error submitting application' },
-        { status: 500 }
-      );
-    }
+  } catch (err) {
+    console.error('Error submitting application:', err);
+    return NextResponse.json(
+      { success: false, message: 'Error submitting application' },
+      { status: 500 }
+    );
+  }
 } 

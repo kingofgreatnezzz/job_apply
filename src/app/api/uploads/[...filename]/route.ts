@@ -9,7 +9,12 @@ export async function GET(
   try {
     const { filename } = await params;
     const filenameString = filename.join('/');
-    const dataDir = path.join(process.cwd(), 'data');
+    
+    // Use /tmp directory for Vercel (writable in serverless functions)
+    const dataDir = process.env.NODE_ENV === 'production' 
+      ? '/tmp/data' 
+      : path.join(process.cwd(), 'data');
+    
     const uploadsDir = path.join(dataDir, 'uploads');
     const filePath = path.join(uploadsDir, filenameString);
 
