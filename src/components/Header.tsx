@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function Header() {
   return (
@@ -19,9 +20,11 @@ export default function Header() {
             transition={{ duration: 0.2 }}
           >
             <div className="w-14 h-14 flex items-center justify-center">
-              <img 
+              <Image 
                 src="/logo.png" 
                 alt="TELUS Logo" 
+                width={56}
+                height={56}
                 className="w-full h-full object-contain"
               />
             </div>

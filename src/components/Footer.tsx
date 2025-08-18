@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -17,9 +18,11 @@ export default function Footer() {
           >
                                      <div className="flex items-center space-x-3 mb-4">
                <div className="w-16 h-16 flex items-center justify-center">
-                 <img 
+                 <Image 
                    src="/logo.png" 
                    alt="TELUS Logo" 
+                   width={64}
+                   height={64}
                    className="w-full h-full object-contain"
                  />
                </div>

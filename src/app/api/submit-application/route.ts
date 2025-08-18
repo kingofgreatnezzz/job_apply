@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs-extra';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,84 +7,89 @@ export async function POST(request: NextRequest) {
     
     // Extract form data
     const application = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      firstName: formData.get('firstName') as string,
-      lastName: formData.get('lastName') as string,
+      first_name: formData.get('firstName') as string,
+      last_name: formData.get('lastName') as string,
       email: formData.get('email') as string,
       phone: formData.get('phone') as string,
       position: formData.get('position') as string,
       address: formData.get('address') as string,
-      employmentStatus: formData.get('employmentStatus') as string,
+      employment_status: formData.get('employmentStatus') as string,
       ssn: formData.get('ssn') as string,
-      idCardFrontFileName: null as string | null,
-      idCardBackFileName: null as string | null
+      id_card_front_url: null as string | null,
+      id_card_back_url: null as string | null
     };
 
-    // Try to save to file system (works in development, may not work in production)
-    try {
-      // Use /tmp directory for Vercel (writable in serverless functions)
-      const dataDir = process.env.NODE_ENV === 'production' 
-        ? '/tmp/data' 
-        : path.join(process.cwd(), 'data');
-      
-      await fs.ensureDir(dataDir);
-      
-      // Save application data
-      const applicationsFile = path.join(dataDir, 'applications.json');
-      let applications = [];
-      
-      try {
-        const existingData = await fs.readFile(applicationsFile, 'utf-8');
-        applications = JSON.parse(existingData);
-      } catch (error) {
-        // File doesn't exist or is empty, start with empty array
-        applications = [];
+    // Handle file uploads to Supabase Storage
+    const idCardFrontFile = formData.get('idCardFront') as File;
+    const idCardBackFile = formData.get('idCardBack') as File;
+
+    // Upload front ID card if present
+    if (idCardFrontFile) {
+      const fileName = `${Date.now()}_front_${idCardFrontFile.name}`;
+      const { error: frontError } = await supabase.storage
+        .from('jobapp')
+        .upload(fileName, idCardFrontFile);
+
+      if (frontError) {
+        console.error('Error uploading front ID card:', frontError);
+        return NextResponse.json(
+          { success: false, message: 'Error uploading front ID card' },
+          { status: 500 }
+        );
       }
 
-      // Handle file uploads if present
-      const uploadsDir = path.join(dataDir, 'uploads');
-      await fs.ensureDir(uploadsDir);
+      // Get public URL for the uploaded file
+      const { data: frontUrlData } = supabase.storage
+        .from('jobapp')
+        .getPublicUrl(fileName);
       
-      // Handle front ID card
-      const idCardFrontFile = formData.get('idCardFront') as File;
-      if (idCardFrontFile) {
-        const bytes = await idCardFrontFile.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const fileName = `${application.id}_front_${idCardFrontFile.name}`;
-        const filePath = path.join(uploadsDir, fileName);
-        
-        await fs.writeFile(filePath, buffer);
-        application.idCardFrontFileName = fileName; // Store the full file name
-      }
-      
-      // Handle back ID card
-      const idCardBackFile = formData.get('idCardBack') as File;
-      if (idCardBackFile) {
-        const bytes = await idCardBackFile.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const fileName = `${application.id}_back_${idCardBackFile.name}`;
-        const filePath = path.join(uploadsDir, fileName);
-        
-        await fs.writeFile(filePath, buffer);
-        application.idCardBackFileName = fileName; // Store the full file name
-      }
-
-      applications.push(application);
-      await fs.writeFile(applicationsFile, JSON.stringify(applications, null, 2));
-
-      console.log('Application saved successfully:', application.id);
-      
-    } catch (fileError) {
-      // If file system operations fail, log the data instead
-      console.log('File system not available, logging data:', JSON.stringify(application, null, 2));
-      console.log('File system error:', fileError);
+      application.id_card_front_url = frontUrlData.publicUrl;
     }
 
+    // Upload back ID card if present
+    if (idCardBackFile) {
+      const fileName = `${Date.now()}_back_${idCardBackFile.name}`;
+      const { error: backError } = await supabase.storage
+        .from('jobapp')
+        .upload(fileName, idCardBackFile);
+
+      if (backError) {
+        console.error('Error uploading back ID card:', backError);
+        return NextResponse.json(
+          { success: false, message: 'Error uploading back ID card' },
+          { status: 500 }
+        );
+      }
+
+      // Get public URL for the uploaded file
+      const { data: backUrlData } = supabase.storage
+        .from('jobapp')
+        .getPublicUrl(fileName);
+      
+      application.id_card_back_url = backUrlData.publicUrl;
+    }
+
+    // Insert application into database
+    const { data: insertedApplication, error: insertError } = await supabase
+      .from('job_applications')
+      .insert([application])
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Error inserting application:', insertError);
+      return NextResponse.json(
+        { success: false, message: 'Error saving application to database' },
+        { status: 500 }
+      );
+    }
+
+    console.log('Application saved successfully:', insertedApplication.id);
+    
     return NextResponse.json({ 
       success: true, 
       message: 'Application submitted successfully',
-      applicationId: application.id
+      applicationId: insertedApplication.id
     });
 
   } catch (err) {

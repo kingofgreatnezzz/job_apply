@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import JobApplicationForm from '../components/JobApplicationForm';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -52,9 +53,11 @@ export default function Home() {
                transition={{ delay: 0.5, duration: 0.8 }}
              >
                <div className="w-12 h-12 flex items-center justify-center">
-                 <img 
+                 <Image 
                    src="/logo.png" 
                    alt="TELUS Logo" 
+                   width={48}
+                   height={48}
                    className="w-full h-full object-contain"
                  />
                </div>

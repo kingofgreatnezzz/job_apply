@@ -79,7 +79,7 @@ export default function JobApplicationForm({ positions }: JobApplicationFormProp
        } else {
          alert('Error submitting application. Please try again.');
        }
-         } catch (err) {
+         } catch {
       alert('Error submitting application. Please try again.');
     } finally {
        setIsSubmitting(false);
