@@ -7,13 +7,39 @@ import type { JobApplication } from '@/lib/supabase';
 
 export default function AdminPage() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [filteredApplications, setFilteredApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [showFullSSN, setShowFullSSN] = useState(false);
 
   useEffect(() => {
     fetchApplications();
   }, []);
+
+  useEffect(() => {
+    let filtered = applications;
+    
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(app => 
+        app.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.ssn.includes(searchTerm)
+      );
+    }
+    
+    // Filter by status
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(app => app.status === statusFilter);
+    }
+    
+    setFilteredApplications(filtered);
+  }, [applications, searchTerm, statusFilter]);
 
   const fetchApplications = async () => {
     try {
@@ -55,7 +81,7 @@ export default function AdminPage() {
   };
 
   const deleteApplication = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this application?')) return;
+    if (!confirm('⚠️ WARNING: This will permanently delete the application and all associated data. Are you sure?')) return;
 
     try {
       const { error } = await supabase
@@ -65,6 +91,30 @@ export default function AdminPage() {
 
       if (error) {
         console.error('Error deleting application:', error);
+        return;
+      }
+
+      // Refresh the applications list
+      fetchApplications();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const bulkUpdateStatus = async (status: string) => {
+    const selectedIds = filteredApplications.map(app => app.id).filter(Boolean) as string[];
+    if (selectedIds.length === 0) return;
+    
+    if (!confirm(`Are you sure you want to update ${selectedIds.length} applications to status: ${status}?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('job_applications')
+        .update({ status })
+        .in('id', selectedIds);
+
+      if (error) {
+        console.error('Error updating applications:', error);
         return;
       }
 
@@ -137,6 +187,104 @@ export default function AdminPage() {
           <div className="px-6 py-4 border-b border-gray-200">
             <h1 className="text-2xl font-bold text-gray-900">Job Applications Admin</h1>
             <p className="text-gray-600 mt-1">Manage and review job applications</p>
+            <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-sm text-yellow-800">
+                ⚠️ <strong>Security Note:</strong> This panel contains sensitive information including SSNs. 
+                Ensure proper access controls and data protection measures are in place.
+              </p>
+            </div>
+          </div>
+
+          {/* Search and Filter Controls */}
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  placeholder="Search by name, email, position, or SSN..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div className="flex-shrink-0">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Showing {filteredApplications.length} of {applications.length} applications
+              </div>
+              <div className="text-sm text-gray-600">
+                📊 Status: {applications.filter(app => app.status === 'pending').length} Pending • 
+                {applications.filter(app => app.status === 'approved').length} Approved • 
+                {applications.filter(app => app.status === 'rejected').length} Rejected
+              </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={fetchApplications}
+                  className="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors"
+                  title="Refresh applications"
+                >
+                  🔄 Refresh
+                </button>
+                <button
+                  onClick={() => {
+                    const csvContent = "data:text/csv;charset=utf-8," + 
+                      "Name,Email,Position,SSN,Status,Date Applied\n" +
+                      filteredApplications.map(app => 
+                        `"${app.first_name} ${app.last_name}","${app.email}","${app.position}","${app.ssn}","${app.status || 'pending'}","${app.created_at ? new Date(app.created_at).toLocaleDateString() : 'N/A'}"`
+                      ).join("\n");
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", "job_applications.csv");
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  className="text-sm bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors"
+                  title="Export to CSV"
+                >
+                  📊 Export CSV
+                </button>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">Bulk Actions:</span>
+                  <button
+                    onClick={() => bulkUpdateStatus('approved')}
+                    className="text-sm bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition-colors"
+                    title="Approve all visible applications"
+                  >
+                    ✅ Approve All
+                  </button>
+                  <button
+                    onClick={() => bulkUpdateStatus('rejected')}
+                    className="text-sm bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                    title="Reject all visible applications"
+                  >
+                    ❌ Reject All
+                  </button>
+                </div>
+                <label className="flex items-center space-x-2 text-sm text-gray-600">
+                  <input
+                    type="checkbox"
+                    checked={showFullSSN}
+                    onChange={(e) => setShowFullSSN(e.target.checked)}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span>Show full SSN</span>
+                </label>
+              </div>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -153,6 +301,12 @@ export default function AdminPage() {
                     Contact
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    SSN
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date Applied
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -164,7 +318,7 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {applications.map((app) => (
+                {filteredApplications.map((app) => (
                   <tr key={app.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
@@ -183,6 +337,31 @@ export default function AdminPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{app.email}</div>
                       <div className="text-sm text-gray-500">{app.phone}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-2">
+                        <div 
+                          className="text-sm text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded cursor-help"
+                          title={`Full SSN: ${app.ssn}`}
+                        >
+                          {app.ssn}
+                        </div>
+                        <button
+                          onClick={() => copyToClipboard(app.ssn)}
+                          className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
+                          title="Copy SSN"
+                        >
+                          📋
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {app.created_at ? new Date(app.created_at).toLocaleDateString() : 'N/A'}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {app.created_at ? new Date(app.created_at).toLocaleTimeString() : ''}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
@@ -268,9 +447,11 @@ export default function AdminPage() {
             </table>
           </div>
 
-          {applications.length === 0 && (
+          {filteredApplications.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-gray-500">No applications found</div>
+              <div className="text-gray-500">
+                {applications.length === 0 ? 'No applications found' : 'No applications match your search criteria'}
+              </div>
             </div>
           )}
         </div>

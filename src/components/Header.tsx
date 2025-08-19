@@ -60,6 +60,14 @@ export default function Header() {
             >
               Apply
             </motion.a>
+            <motion.a
+              href="/only-admin"
+              className="text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium"
+              whileHover={{ y: -2 }}
+              transition={{ duration: 0.2 }}
+            >
+              Admin
+            </motion.a>
           </nav>
 
           {/* Mobile menu button */}
@@ -69,6 +77,15 @@ export default function Header() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
+            {/* Mobile Admin Link */}
+            <div className="mt-2">
+              <a
+                href="/only-admin"
+                className="text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 font-medium block"
+              >
+                Admin Panel
+              </a>
+            </div>
           </div>
         </div>
       </div>
